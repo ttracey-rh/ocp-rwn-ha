@@ -1,0 +1,42 @@
+apiVersion: piraeus.io/v1
+kind: LinstorSatelliteConfiguration
+metadata:
+  name: storage-pool
+spec:
+  podTemplate:
+    spec:
+      volumes:
+        - name: usr-src
+          emptyDir: { }
+          hostPath:
+            $patch: delete
+      initContainers:
+        - name: kernel-header-copy
+# 4.14.something          
+#image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:559e79cf826662c3556306e5dc709c53ba1266e26b1ef54a10e45ae0849d4590
+          #4.14.18
+          image: quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:6d322550a952371f2594154fc9c11d3e7f005af0acef23cbebd98c69e6f980df
+          args:
+            - cp
+            - -avt
+            - /container/usr/src
+            - /usr/src/kernels
+          volumeMounts:
+            - name: usr-src
+              mountPath: /container/usr/src
+          securityContext:
+            privileged: true
+        - name: drbd-module-loader
+          securityContext:
+            privileged: true
+          image: quay.io/rh_ee_ttracey/drbd9@sha256:15d26abc9604a54b00392b21ea3643e84f52165eab8918218e951d56d819afe5
+  storagePools:
+#    - name: pool1
+#      fileThinPool:
+#        directory: /var/lib/piraeus-datastore/pool1
+    - name: pool1
+      lvmPool:
+        volumeGroup: vg1
+      source:
+        hostDevices:
+          - /dev/nvme0n1
