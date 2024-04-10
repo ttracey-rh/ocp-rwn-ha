@@ -26,4 +26,9 @@ Application pods will connect to a statically defined NFS-backed PV that utilize
       - Edit the `image:` field for the `drbd-module-loader` init container.  Use the image URL of the `drbd-module-loader` image created earlier.  
 - Apply the `01-linstor-cluster.yaml`, `02-satellite-config.yaml` and `03-storage-class.yaml` to the OCP cluster.  All operator pods should now be running.  
 ### 3.  Create NFS Server pods and service
+- Apply the `01-nfs-server-pvc.yaml`, `02-nfs-server-rc.yaml`, and `03-nfs-server-service.yaml` files to the OCP Cluster.  This creates the NFS pod and a DRBD-backed PV to store the replicated data.  
 ### 4.  Set up example application
+- Use Kustomize to apply the example application to the OCP cluster.  
+```
+oc apply -k .
+```
