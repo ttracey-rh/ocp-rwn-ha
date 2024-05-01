@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nfs
+  name: web-vol
 spec:
   accessModes:
     - ReadWriteMany
